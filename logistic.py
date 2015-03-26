@@ -32,14 +32,13 @@ def sgd(data, labels, alpha):
     weights = np.zeros(np.shape(data[0])) # Initialise weights to 0
     mse = 1.0
     prev_mse = 100.0
-    while mse/prev_mse < 0.999999:
+    while mse/prev_mse < 0.99999:
         prev_mse = mse
 
         for i in range(m):
             d = data[i:i+1]
-            hypothesis = np.dot(weights, np.transpose(d))
-            loss = hypothesis - labels[i:i+1]
-            gradient = np.dot(loss, d)
+            hypothesis = np.dot(d, weights)
+            gradient = 1.0/(1.0 + np.exp(-hypothesis))
             weights = weights - (alpha * gradient)
 
         mse = compute_cost(data, labels, weights)
@@ -49,7 +48,7 @@ def sgd(data, labels, alpha):
 
 # Batch gradient descent
 def bgd(data, labels, alpha):
-    weights = np.zeros(np.shape(data[0])) # Initialise weights to 0
+    weights = np.array([0]*len(data[0])) # Initialise weights to 0
     m = len(labels)
     mse = 1.0
     prev_mse = 100.0
@@ -70,7 +69,7 @@ def bgd(data, labels, alpha):
             #return None, None
     return weights, errors
 
-def linear_regression(folds, alpha):
+def logistic_regression(folds, alpha):
     accuracy = []
     fold_errors = []
     scores = []
@@ -93,11 +92,10 @@ def linear_regression(folds, alpha):
 
 def main():
     folds = utils.get_data()
-    alphas = [0.001, 0.0001, 0.00001]
-    #alphas = [0.1, 0.01, 0.001]
+    alphas = [0.1, 0.01, 0.001]
     rates = {}
     for alpha in alphas:
-        accuracy, errors = linear_regression(folds, alpha)
+        accuracy, errors = logistic_regression(folds, alpha)
         rates[alpha] = errors
     print np.mean(accuracy)
     utils.plot_errors(rates)
