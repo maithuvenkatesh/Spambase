@@ -26,7 +26,7 @@ def normalise(data):
         tmp = [(d[i] - means[i])/stds[i] for i in range(len(d)-1)]
         tmp.append(d[-1])
         norms.append(tmp)
-    return np.random.permutation(norms)
+    return norms
 
 # Helper function for splitting data into groups
 def get_group(data, k, i):
@@ -35,7 +35,7 @@ def get_group(data, k, i):
 
 # Splits dataset into k folds
 def split_data(data, k):
-    #print "utils.py: Splitting data into %d folds" %(k)
+    print "utils.py: Splitting data into %d folds" %(k)
     groups = []
     for i in range(k):
         g = np.random.permutation((list((get_group(data, k, i)))))
@@ -44,7 +44,7 @@ def split_data(data, k):
 
 # Splits fold into training and testing sets
 def split_fold(folds, i):
-    #print "utils.py: Splitting fold"
+    print "utils.py: Splitting fold"
     train = list(folds[:i]) + list(folds[i+1:])
     train = [x for t in train for x in t] # Converts into a 2d array
 
@@ -62,22 +62,6 @@ def get_data():
     data_norm = normalise(raw_data)
     groups = split_data(data_norm, 10)
     return groups
-
-'''
-def temp():
-    raw_data = get_raw_data()
-    data_norm = normalise(raw_data)
-
-    train = data_norm[:4141]
-    test = data_norm[4141:]
-
-    train_data = [x[:-1] for x in train]
-    train_labels = [x[-1] for x in train]
-    test_data = [x[:-1] for x in test]
-    test_labels = [x[-1] for x in test]
-
-    return train_data, train_labels, test_data, test_labels
-'''
 
 def get_avg_mse(errors):
     max_iterations = np.max([len(x) for x in errors])
@@ -100,14 +84,20 @@ def plot_errors(rates):
         iterations, avg_errors = get_avg_mse(rates[alpha])
         plt.plot(iterations, avg_errors, colours[idx], label=str(alpha))
         #plt.plot(range(len(rates[alpha])), rates[alpha], colours[idx], label=str(alpha))
-    plt.xlabel("No. of iterations")
+    plt.xlabel("No. of Iterations")
     plt.ylabel("Mean Squared Error (MSE)")
-    plt.title("Batch Gradient Descent")
+    plt.title("Stochastic Gradient Descent")
     plt.legend(loc="upper right")
     plt.show()
 
+def roc_curve(rates):
+    return ''
+
+
+
 def main():
     folds = get_data()
+    split_fold(folds, 2)
 
 if __name__ == '__main__':
     main()

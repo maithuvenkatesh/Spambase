@@ -22,7 +22,14 @@ def compute_cost(data, labels, weights):
     m = len(labels)
     hypothesis = np.dot(data, weights)
     sq_errors = (hypothesis - labels) ** 2
-    mse = (0.5*(np.sum(sq_errors)))/m
+    mse = (np.sum(sq_errors))/(2.0*m)
+    return mse
+
+def cost(hypothesis, labels, weights):
+    m = len(labels)
+    #hypothesis = np.dot(data, weights)
+    sq_errors = (hypothesis - labels) ** 2
+    mse = (np.sum(sq_errors))/(2.0*m)
     return mse
 
 # Stochastic gradient descent
@@ -32,16 +39,18 @@ def sgd(data, labels, alpha):
     weights = np.zeros(np.shape(data[0])) # Initialise weights to 0
     mse = 1.0
     prev_mse = 100.0
+    grad = []
     while mse/prev_mse < 0.999999:
         prev_mse = mse
 
         for i in range(m):
-            d = data[i:i+1]
-            hypothesis = np.dot(weights, np.transpose(d))
-            loss = hypothesis - labels[i:i+1]
-            gradient = np.dot(loss, d)
+            d = data[i]
+            hypothesis = np.dot(d, weights)
+            gradient = np.dot((hypothesis - labels[i]), d)
             weights = weights - (alpha * gradient)
 
+        #predictions = get_predictions(data, weights)
+        #mse = cost(predictions, labels, weights)
         mse = compute_cost(data, labels, weights)
         errors.append(mse)
         print "MSE %0.8f after iteration %d" % (mse, len(errors))
@@ -93,7 +102,7 @@ def linear_regression(folds, alpha):
 
 def main():
     folds = utils.get_data()
-    alphas = [0.001, 0.0001, 0.00001]
+    alphas = [0.001]
     #alphas = [0.1, 0.01, 0.001]
     rates = {}
     for alpha in alphas:
@@ -101,7 +110,6 @@ def main():
         rates[alpha] = errors
     print np.mean(accuracy)
     utils.plot_errors(rates)
-
 
 
 if __name__ == '__main__':
