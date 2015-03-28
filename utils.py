@@ -86,7 +86,7 @@ def plot_errors(rates):
         #plt.plot(range(len(rates[alpha])), rates[alpha], colours[idx], label=str(alpha))
     plt.xlabel("No. of Iterations")
     plt.ylabel("Mean Squared Error (MSE)")
-    plt.title("Stochastic Gradient Descent")
+    plt.title("Linear Regression with Stochastic Gradient Descent")
     plt.legend(loc="upper right")
     plt.show()
 
